@@ -11,8 +11,6 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     
     private var sceneView = ARSCNView()
     private var cubesNode = SCNNode()
-//    private var modelNode: SCNNode?
- //   private var crystalNode = SCNNode()
     private let controlPanel: ControlPanelView = ControlPanel()
     
     override func viewDidLoad() {
@@ -45,19 +43,6 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         sceneView.delegate = self
         controlPanel.delegate = self
         addARSCNViewConfiguration()
-        
-//        guard let crystalScene = SCNScene(named: "CrystalScene.scn") else {
-//            fatalError("Failed to load scene")
-//        }
-//
-//        for childNode in crystalScene.rootNode.childNodes {
-//            crystalNode.addChildNode(childNode)
-//        }
-//        crystalNode.isHidden = true
-  //      crystalNode.position = SCNVector3(0, 0, -1)
-      //  sceneView.scene.rootNode.addChildNode(crystalNode)
-
-    
     }
     
     private func configureGestures() {
@@ -69,23 +54,13 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     }
     
     private func addARSCNViewConfiguration() {
-      //  let configuration = ARWorldTrackingConfiguration()
-     //   configuration.planeDetection = [.horizontal, .vertical]
-        let configuration = ARImageTrackingConfiguration()
-        guard let trackingImages = ARReferenceImage.referenceImages(inGroupNamed: "Markers", bundle: Bundle.main) else {
-            print("no available images")
-            return
-        }
-        configuration.trackingImages = trackingImages
+        let configuration = ARWorldTrackingConfiguration()
+        configuration.planeDetection = [.horizontal, .vertical]
+        guard let trackingImages = ARReferenceImage.referenceImages(inGroupNamed: "Markers", bundle: Bundle.main) else { print("No available images"); return }
+        configuration.detectionImages = trackingImages
         configuration.maximumNumberOfTrackedImages = 1
         sceneView.session.run(configuration)
     }
-    
-//    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-//        addAmbientLight(for: &sceneView)
-//
-//
-//    }
     
     func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
         let node = SCNNode()
@@ -96,15 +71,6 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
             
             let planeNode = SCNNode(geometry: plane)
             planeNode.eulerAngles.x = -.pi / 2
-            
-//            let crystalScene = SCNScene(named: "CrystalScene.scn")!
-//            let crystalNode = crystalScene.rootNode.childNodes.first!
-         /*
-            self.crystalNode.position = SCNVector3Zero
-            self.crystalNode.position.z = 0.1
-            self.crystalNode.isHidden = false
-            planeNode.addChildNode(self.crystalNode)
-          */
             
             let crystal = createCrystalNode()
             crystal.position = SCNVector3Zero
@@ -118,14 +84,9 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
 
     func createCrystalNode() -> SCNNode {
         let node = SCNNode()
-        guard let crystalScene = SCNScene(named: "CrystalScene.scn") else {
-            fatalError("Failed to load scene")
-        }
-
-        for childNode in crystalScene.rootNode.childNodes {
-            node.addChildNode(childNode)
-        }
+        guard let crystalScene = SCNScene(named: "CrystalScene.scn") else { fatalError("Failed to load scene") }
         
+        for childNode in crystalScene.rootNode.childNodes { node.addChildNode(childNode) }
         return node
     }
     
@@ -170,8 +131,10 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         }
         // If the user did not hit the cube, then create a new cube
         if !hitCube {
+            
             let results = sceneView.hitTest(location, types: [.existingPlaneUsingExtent, .estimatedHorizontalPlane])
             if let hitTestResult = results.first {
+                print("hit")
                 let position = hitTestResult.worldTransform.columns.3
                 let cubeNode = cubesNode.createColoredCubeNode(color: UIColor.randomColor())
                 cubeNode.position = SCNVector3(position.x, position.y, position.z)
@@ -220,9 +183,6 @@ extension ARViewController: ControlPanelViewDelegate {
     
 }
 
-extension ARViewController: ARSessionDelegate {
-    
-    
-}
+
 
 
