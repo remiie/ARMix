@@ -7,12 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B601901029FE9BA70097332B /* ControlPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B601900F29FE9BA70097332B /* ControlPanel.swift */; };
 		B66D492D29FD7720008EDA20 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66D492C29FD7720008EDA20 /* AppDelegate.swift */; };
 		B66D493129FD7720008EDA20 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66D493029FD7720008EDA20 /* ViewController.swift */; };
 		B66D493629FD7721008EDA20 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B66D493529FD7721008EDA20 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B601900F29FE9BA70097332B /* ControlPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlPanel.swift; sourceTree = "<group>"; };
 		B66D492929FD7720008EDA20 /* ARMix.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARMix.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B66D492C29FD7720008EDA20 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B66D493029FD7720008EDA20 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -51,6 +53,7 @@
 			children = (
 				B66D492C29FD7720008EDA20 /* AppDelegate.swift */,
 				B66D493029FD7720008EDA20 /* ViewController.swift */,
+				B601900F29FE9BA70097332B /* ControlPanel.swift */,
 				B66D493529FD7721008EDA20 /* Assets.xcassets */,
 			);
 			path = ARMix;
@@ -126,6 +129,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B66D493129FD7720008EDA20 /* ViewController.swift in Sources */,
+				B601901029FE9BA70097332B /* ControlPanel.swift in Sources */,
 				B66D492D29FD7720008EDA20 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

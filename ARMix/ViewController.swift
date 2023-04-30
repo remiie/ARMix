@@ -34,6 +34,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }()
     
     let cubesNode = SCNNode()
+    let controlPanel: ControlPanelView = ControlPanel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,59 +47,68 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             sceneView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
         
+        
+        view.addSubview(controlPanel)
+        controlPanel.translatesAutoresizingMaskIntoConstraints = false
+        controlPanel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16).isActive = true
+        controlPanel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16).isActive = true
+        controlPanel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16).isActive = true
+
         let configuration = ARWorldTrackingConfiguration()
         configuration.planeDetection = [.horizontal, .vertical]
         sceneView.session.run(configuration)
         sceneView.delegate = self
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         sceneView.addGestureRecognizer(tapGesture)
+        sceneView.addGestureRecognizer(longPressGesture)
         sceneView.scene.rootNode.addChildNode(cubesNode)
         
-        let leftButton = UIButton(type: .system)
-        leftButton.tintColor = .white
-        leftButton.setImage(UIImage(named: "left")?.withRenderingMode(.alwaysTemplate), for: .normal)
-        leftButton.addTarget(self, action: #selector(leftButtonPressed), for: .touchUpInside)
-        view.addSubview(leftButton)
+//        let leftButton = UIButton(type: .system)
+//        leftButton.tintColor = .white
+//        leftButton.setImage(UIImage(named: "left")?.withRenderingMode(.alwaysTemplate), for: .normal)
+//        leftButton.addTarget(self, action: #selector(leftButtonPressed), for: .touchUpInside)
+//        view.addSubview(leftButton)
+//
+//        let rightButton = UIButton(type: .system)
+//        rightButton.tintColor = .white
+//        rightButton.setImage(UIImage(named: "right")?.withRenderingMode(.alwaysTemplate), for: .normal)
+//        rightButton.addTarget(self, action: #selector(rightButtonPressed), for: .touchUpInside)
+//        view.addSubview(rightButton)
+//
+//        let forwardButton = UIButton(type: .system)
+//        forwardButton.tintColor = .white
+//        forwardButton.setImage(UIImage(named: "forward")?.withRenderingMode(.alwaysTemplate), for: .normal)
+//        forwardButton.addTarget(self, action: #selector(forwardButtonPressed), for: .touchUpInside)
+//        view.addSubview(forwardButton)
         
-        let rightButton = UIButton(type: .system)
-        rightButton.tintColor = .white
-        rightButton.setImage(UIImage(named: "right")?.withRenderingMode(.alwaysTemplate), for: .normal)
-        rightButton.addTarget(self, action: #selector(rightButtonPressed), for: .touchUpInside)
-        view.addSubview(rightButton)
+//        leftButton.isHidden = true
+//        rightButton.isHidden = true
+//        forwardButton.isHidden = true
         
-        let forwardButton = UIButton(type: .system)
-        forwardButton.tintColor = .white
-        forwardButton.setImage(UIImage(named: "forward")?.withRenderingMode(.alwaysTemplate), for: .normal)
-        forwardButton.addTarget(self, action: #selector(forwardButtonPressed), for: .touchUpInside)
-        view.addSubview(forwardButton)
+//        view.addSubview(leftButton)
+//        view.addSubview(rightButton)
+//        view.addSubview(forwardButton)
+//        leftButton.translatesAutoresizingMaskIntoConstraints = false
+//        rightButton.translatesAutoresizingMaskIntoConstraints = false
+//        forwardButton.translatesAutoresizingMaskIntoConstraints = false
         
-        leftButton.isHidden = true
-        rightButton.isHidden = true
-        forwardButton.isHidden = true
-        
-        view.addSubview(leftButton)
-        view.addSubview(rightButton)
-        view.addSubview(forwardButton)
-        leftButton.translatesAutoresizingMaskIntoConstraints = false
-        rightButton.translatesAutoresizingMaskIntoConstraints = false
-        forwardButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            leftButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            leftButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
-            leftButton.heightAnchor.constraint(equalToConstant: 60),
-            leftButton.widthAnchor.constraint(equalToConstant: 60),
-            
-            forwardButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            forwardButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
-            forwardButton.widthAnchor.constraint(equalToConstant: 60),
-            forwardButton.heightAnchor.constraint(equalToConstant: 60),
-            
-            rightButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            rightButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
-            rightButton.heightAnchor.constraint(equalToConstant: 60),
-            rightButton.widthAnchor.constraint(equalToConstant: 60)
-        ])
+//        NSLayoutConstraint.activate([
+//            leftButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+//            leftButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+//            leftButton.heightAnchor.constraint(equalToConstant: 60),
+//            leftButton.widthAnchor.constraint(equalToConstant: 60),
+//
+//            forwardButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+//            forwardButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+//            forwardButton.widthAnchor.constraint(equalToConstant: 60),
+//            forwardButton.heightAnchor.constraint(equalToConstant: 60),
+//            
+//            rightButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+//            rightButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+//            rightButton.heightAnchor.constraint(equalToConstant: 60),
+//            rightButton.widthAnchor.constraint(equalToConstant: 60)
+//        ])
     }
     
     @objc func leftButtonPressed() {
@@ -182,6 +192,26 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             }
         }
     }
+    
+    @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
+        if gestureRecognizer.state == .began {
+            // Определяем позицию касания на экране
+            let location = gestureRecognizer.location(in: sceneView)
+            
+            // Определяем ноды, на которые пользователь нажал
+            let hitTestResults = sceneView.hitTest(location, options: [:])
+            
+            // Проверяем, есть ли среди них кубик
+            for hitTestResult in hitTestResults {
+                if hitTestResult.node.name == Nodes.cubeNode.name {
+                    // Удаляем кубик
+                    hitTestResult.node.removeFromParentNode()
+                    if !hasCubes() { view.subviews.forEach { $0.isHidden = true } }
+                }
+            }
+        }
+    }
+
 
     
     func createCubeNode() -> SCNNode {
@@ -203,6 +233,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     func changeCubeColor(cubeNode: SCNNode, color: UIColor) {
         cubeNode.geometry?.firstMaterial?.diffuse.contents = color
     }
+    
+    func hasCubes() -> Bool {
+        return !cubesNode.childNodes.isEmpty
+    }
+
 
 
 }
