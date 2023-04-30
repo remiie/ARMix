@@ -49,6 +49,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         
         view.addSubview(controlPanel)
+        controlPanel.delegate = self
         controlPanel.translatesAutoresizingMaskIntoConstraints = false
         controlPanel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16).isActive = true
         controlPanel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16).isActive = true
@@ -63,73 +64,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         sceneView.addGestureRecognizer(tapGesture)
         sceneView.addGestureRecognizer(longPressGesture)
         sceneView.scene.rootNode.addChildNode(cubesNode)
-        
-//        let leftButton = UIButton(type: .system)
-//        leftButton.tintColor = .white
-//        leftButton.setImage(UIImage(named: "left")?.withRenderingMode(.alwaysTemplate), for: .normal)
-//        leftButton.addTarget(self, action: #selector(leftButtonPressed), for: .touchUpInside)
-//        view.addSubview(leftButton)
-//
-//        let rightButton = UIButton(type: .system)
-//        rightButton.tintColor = .white
-//        rightButton.setImage(UIImage(named: "right")?.withRenderingMode(.alwaysTemplate), for: .normal)
-//        rightButton.addTarget(self, action: #selector(rightButtonPressed), for: .touchUpInside)
-//        view.addSubview(rightButton)
-//
-//        let forwardButton = UIButton(type: .system)
-//        forwardButton.tintColor = .white
-//        forwardButton.setImage(UIImage(named: "forward")?.withRenderingMode(.alwaysTemplate), for: .normal)
-//        forwardButton.addTarget(self, action: #selector(forwardButtonPressed), for: .touchUpInside)
-//        view.addSubview(forwardButton)
-        
-//        leftButton.isHidden = true
-//        rightButton.isHidden = true
-//        forwardButton.isHidden = true
-        
-//        view.addSubview(leftButton)
-//        view.addSubview(rightButton)
-//        view.addSubview(forwardButton)
-//        leftButton.translatesAutoresizingMaskIntoConstraints = false
-//        rightButton.translatesAutoresizingMaskIntoConstraints = false
-//        forwardButton.translatesAutoresizingMaskIntoConstraints = false
-        
-//        NSLayoutConstraint.activate([
-//            leftButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-//            leftButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
-//            leftButton.heightAnchor.constraint(equalToConstant: 60),
-//            leftButton.widthAnchor.constraint(equalToConstant: 60),
-//
-//            forwardButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-//            forwardButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
-//            forwardButton.widthAnchor.constraint(equalToConstant: 60),
-//            forwardButton.heightAnchor.constraint(equalToConstant: 60),
-//            
-//            rightButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-//            rightButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
-//            rightButton.heightAnchor.constraint(equalToConstant: 60),
-//            rightButton.widthAnchor.constraint(equalToConstant: 60)
-//        ])
-    }
-    
-    @objc func leftButtonPressed() {
-            moveCube(direction: SCNVector3(-0.30, 0, 0))
-        }
-        
-        @objc func rightButtonPressed() {
-            moveCube(direction: SCNVector3(0.30, 0, 0))
-        }
-        
-        @objc func forwardButtonPressed() {
-            moveCube(direction: SCNVector3(0, 0, -0.30))
-        }
-    
-    func moveCube(direction: SCNVector3) {
-        print("change direction")
-        
-        for cube in cubesNode.childNodes {
-            let currentPosition = cube.position
-              cube.position = currentPosition + direction
-          }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -144,6 +78,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+        // here we use the illumination estimation to adjust the virtual lighting in the scene
+        
         guard let lightEstimation = sceneView.session.currentFrame?.lightEstimate else { return }
         
         let ambientLight = SCNLight()
@@ -155,32 +91,29 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         sceneView.scene.rootNode.categoryBitMask = 1
     }
     
-//    @objc func handleTap(sender: UITapGestureRecognizer) {
-//        let location = sender.location(in: sceneView)
-//        let results = sceneView.hitTest(location, types: [.existingPlaneUsingExtent, .estimatedHorizontalPlane])
-//
-//        if let hitTestResult = results.first {
-//            let position = hitTestResult.worldTransform.columns.3
-//            let cubeNode = createCubeNode()
-//            cubeNode.position = SCNVector3(position.x, position.y, position.z)
-//            cubesNode.addChildNode(cubeNode)
-//          //  sceneView.scene.rootNode.addChildNode(cubeNode)
-//            view.subviews.forEach { $0.isHidden = false }
-//        }
-//    }
     @objc func handleTap(_ gestureRecognizer: UITapGestureRecognizer) {
+        // Check if there are still cubes left
+        defer { if hasCubes() { controlPanel.isHided = false } }  // Hiding the cube control buttons
+       
+        
+        // Determining the touch position on the screen
         let location = gestureRecognizer.location(in: sceneView)
+        
+        // Define the nodes that the user clicked on
         let hitTestResults = sceneView.hitTest(location, options: [:])
+        
         var hitCube = false
         
+        // Check if there is a cube among them
         for hitTestResult in hitTestResults {
             if hitTestResult.node.name == Nodes.cubeNode.name {
                 changeCubeColor(cubeNode: hitTestResult.node, color: UIColor.randomColor())
+                // Changing the color of the cube
                 hitCube = true
                 break
             }
         }
-        
+        // If the user did not hit the cube, then create a new cube
         if !hitCube {
             let results = sceneView.hitTest(location, types: [.existingPlaneUsingExtent, .estimatedHorizontalPlane])
             if let hitTestResult = results.first {
@@ -188,32 +121,32 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 let cubeNode = createColoredCubeNode(color: UIColor.randomColor())
                 cubeNode.position = SCNVector3(position.x, position.y, position.z)
                 cubesNode.addChildNode(cubeNode)
-                view.subviews.forEach { $0.isHidden = false }
+               
             }
         }
     }
     
     @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
+        // Check if there are still cubes left
+        defer { if !hasCubes() { controlPanel.isHided = true } } // Hiding the cube control buttons
+        
         if gestureRecognizer.state == .began {
-            // Определяем позицию касания на экране
+            // Determining the touch position on the screen
             let location = gestureRecognizer.location(in: sceneView)
             
-            // Определяем ноды, на которые пользователь нажал
+            // Define the nodes that the user clicked on
             let hitTestResults = sceneView.hitTest(location, options: [:])
             
-            // Проверяем, есть ли среди них кубик
+            // Check if there is a cube among them
             for hitTestResult in hitTestResults {
                 if hitTestResult.node.name == Nodes.cubeNode.name {
-                    // Удаляем кубик
+                    // Removing the cube
                     hitTestResult.node.removeFromParentNode()
-                    if !hasCubes() { view.subviews.forEach { $0.isHidden = true } }
                 }
             }
         }
     }
 
-
-    
     func createCubeNode() -> SCNNode {
         let cube = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.0)
         let cubeNode = SCNNode(geometry: cube)
@@ -237,8 +170,29 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     func hasCubes() -> Bool {
         return !cubesNode.childNodes.isEmpty
     }
+    
+    func moveCube(direction: SCNVector3) {
+        for cube in cubesNode.childNodes {
+            let currentPosition = cube.position
+              cube.position = currentPosition + direction
+          }
+    }
 
+}
 
-
+extension ViewController: ControlPanelViewDelegate {
+    
+    func leftButtonPressed() {
+        moveCube(direction: SCNVector3(-0.30, 0, 0))
+    }
+    
+    func rightButtonPressed() {
+        moveCube(direction: SCNVector3(0.30, 0, 0))
+    }
+    
+    func forwardButtonPressed() {
+        moveCube(direction: SCNVector3(0, 0, -0.30))
+    }
+    
 }
 
