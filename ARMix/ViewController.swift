@@ -9,13 +9,25 @@ extension SCNVector3 {
 }
 
 extension UIColor {
-   static func randomColor() -> UIColor {
+    static func randomColor() -> UIColor {
         let red = CGFloat(arc4random_uniform(255)) / 255.0
         let green = CGFloat(arc4random_uniform(255)) / 255.0
         let blue = CGFloat(arc4random_uniform(255)) / 255.0
         return UIColor(red: red, green: green, blue: blue, alpha: 1.0)
     }
+    
+}
 
+extension UIView {
+    public func equalToSuperview() {
+        translatesAutoresizingMaskIntoConstraints = false
+        if let superview = superview {
+            leftAnchor.constraint(equalTo: superview.leftAnchor).isActive = true
+            rightAnchor.constraint(equalTo: superview.rightAnchor).isActive = true
+            topAnchor.constraint(equalTo: superview.topAnchor).isActive = true
+            bottomAnchor.constraint(equalTo: superview.bottomAnchor).isActive = true
+        }
+    }
 }
 
 enum Nodes: String {
@@ -27,34 +39,25 @@ enum Nodes: String {
 
 class ViewController: UIViewController, ARSCNViewDelegate {
     
-    let sceneView: ARSCNView = {
+     lazy var sceneView: ARSCNView = {
         let view = ARSCNView()
-        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
     let cubesNode = SCNNode()
-    let controlPanel: ControlPanelView = ControlPanel()
+    let controlPanel: ControlPanelView = {
+        let view = ControlPanel()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(sceneView)
-        
-        NSLayoutConstraint.activate([
-            sceneView.topAnchor.constraint(equalTo: view.topAnchor),
-            sceneView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            sceneView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            sceneView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ])
-        
-        
         view.addSubview(controlPanel)
+        sceneView.equalToSuperview()
         controlPanel.delegate = self
-        controlPanel.translatesAutoresizingMaskIntoConstraints = false
-        controlPanel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16).isActive = true
-        controlPanel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16).isActive = true
-        controlPanel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16).isActive = true
-
+        
         let configuration = ARWorldTrackingConfiguration()
         configuration.planeDetection = [.horizontal, .vertical]
         sceneView.session.run(configuration)
@@ -94,7 +97,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @objc func handleTap(_ gestureRecognizer: UITapGestureRecognizer) {
         // Check if there are still cubes left
         defer { if hasCubes() { controlPanel.isHided = false } }  // Hiding the cube control buttons
-       
+        
         
         // Determining the touch position on the screen
         let location = gestureRecognizer.location(in: sceneView)
@@ -121,7 +124,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 let cubeNode = createColoredCubeNode(color: UIColor.randomColor())
                 cubeNode.position = SCNVector3(position.x, position.y, position.z)
                 cubesNode.addChildNode(cubeNode)
-               
+                
             }
         }
     }
@@ -146,7 +149,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             }
         }
     }
-
+    
     func createCubeNode() -> SCNNode {
         let cube = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.0)
         let cubeNode = SCNNode(geometry: cube)
@@ -174,10 +177,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     func moveCube(direction: SCNVector3) {
         for cube in cubesNode.childNodes {
             let currentPosition = cube.position
-              cube.position = currentPosition + direction
-          }
+            cube.position = currentPosition + direction
+        }
     }
-
+    
 }
 
 extension ViewController: ControlPanelViewDelegate {

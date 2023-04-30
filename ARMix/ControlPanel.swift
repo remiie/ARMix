@@ -70,6 +70,18 @@ final class ControlPanel: UIStackView, ControlPanelView {
         setup()
     }
     
+    override func didMoveToSuperview() {
+        super.didMoveToSuperview()
+        guard let superview = superview else { return }
+        NSLayoutConstraint.activate([
+            
+            leadingAnchor.constraint(equalTo: superview.leadingAnchor, constant: 16),
+            trailingAnchor.constraint(equalTo: superview.trailingAnchor, constant: -16),
+            bottomAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.bottomAnchor, constant: -16)
+
+        ])
+    }
+    
     private func setup() {
         isHided = true
         axis = .horizontal
