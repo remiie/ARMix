@@ -16,6 +16,9 @@
 		B6E73EA929FEC8F6009399D5 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E73EA829FEC8F6009399D5 /* UIColor.swift */; };
 		B6E73EAB29FEC90D009399D5 /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E73EAA29FEC90D009399D5 /* UIView.swift */; };
 		B6E73EAE29FEC9C7009399D5 /* ControlPanelProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E73EAD29FEC9C7009399D5 /* ControlPanelProtocols.swift */; };
+		B6EDF5FB29FEE1D000E39251 /* Stylized_Crystal.usdz in Resources */ = {isa = PBXBuildFile; fileRef = B6EDF5FA29FEE1D000E39251 /* Stylized_Crystal.usdz */; };
+		B6EDF5FD29FEE3C200E39251 /* CrystalScene.scn in Resources */ = {isa = PBXBuildFile; fileRef = B6EDF5FC29FEE3C200E39251 /* CrystalScene.scn */; };
+		B6EDF5FF29FF1EC500E39251 /* marker.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B6EDF5FE29FF1EC500E39251 /* marker.jpg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +32,9 @@
 		B6E73EA829FEC8F6009399D5 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		B6E73EAA29FEC90D009399D5 /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
 		B6E73EAD29FEC9C7009399D5 /* ControlPanelProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlPanelProtocols.swift; sourceTree = "<group>"; };
+		B6EDF5FA29FEE1D000E39251 /* Stylized_Crystal.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = Stylized_Crystal.usdz; sourceTree = "<group>"; };
+		B6EDF5FC29FEE3C200E39251 /* CrystalScene.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = CrystalScene.scn; sourceTree = "<group>"; };
+		B6EDF5FE29FF1EC500E39251 /* marker.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = marker.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,6 +51,7 @@
 		B66D492029FD7720008EDA20 = {
 			isa = PBXGroup;
 			children = (
+				B6EDF5FA29FEE1D000E39251 /* Stylized_Crystal.usdz */,
 				B66D492B29FD7720008EDA20 /* ARMix */,
 				B66D492A29FD7720008EDA20 /* Products */,
 			);
@@ -61,12 +68,15 @@
 		B66D492B29FD7720008EDA20 /* ARMix */ = {
 			isa = PBXGroup;
 			children = (
+				B6E73EB729FEDB9B009399D5 /* Models */,
 				B66D492C29FD7720008EDA20 /* AppDelegate.swift */,
 				B6E73EAF29FEC9E9009399D5 /* Protocols */,
 				B6E73EA329FEC880009399D5 /* Extensions */,
 				B6E73EB029FECA0D009399D5 /* Controllers */,
 				B6E73EAC29FEC9A7009399D5 /* Views */,
 				B66D493529FD7721008EDA20 /* Assets.xcassets */,
+				B6EDF5FC29FEE3C200E39251 /* CrystalScene.scn */,
+				B6EDF5FE29FF1EC500E39251 /* marker.jpg */,
 			);
 			path = ARMix;
 			sourceTree = "<group>";
@@ -104,6 +114,13 @@
 				B66D493029FD7720008EDA20 /* ARViewController.swift */,
 			);
 			path = Controllers;
+			sourceTree = "<group>";
+		};
+		B6E73EB729FEDB9B009399D5 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -164,7 +181,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B6EDF5FD29FEE3C200E39251 /* CrystalScene.scn in Resources */,
+				B6EDF5FB29FEE1D000E39251 /* Stylized_Crystal.usdz in Resources */,
 				B66D493629FD7721008EDA20 /* Assets.xcassets in Resources */,
+				B6EDF5FF29FF1EC500E39251 /* marker.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -11,6 +11,8 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     
     private var sceneView = ARSCNView()
     private var cubesNode = SCNNode()
+//    private var modelNode: SCNNode?
+ //   private var crystalNode = SCNNode()
     private let controlPanel: ControlPanelView = ControlPanel()
     
     override func viewDidLoad() {
@@ -36,10 +38,26 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         view.addSubview(sceneView)
         view.addSubview(controlPanel)
         
+        let scene = SCNScene()
+        sceneView.scene = scene
+        
         sceneView.equalToSuperview()
         sceneView.delegate = self
         controlPanel.delegate = self
         addARSCNViewConfiguration()
+        
+//        guard let crystalScene = SCNScene(named: "CrystalScene.scn") else {
+//            fatalError("Failed to load scene")
+//        }
+//
+//        for childNode in crystalScene.rootNode.childNodes {
+//            crystalNode.addChildNode(childNode)
+//        }
+//        crystalNode.isHidden = true
+  //      crystalNode.position = SCNVector3(0, 0, -1)
+      //  sceneView.scene.rootNode.addChildNode(crystalNode)
+
+    
     }
     
     private func configureGestures() {
@@ -51,13 +69,64 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     }
     
     private func addARSCNViewConfiguration() {
-        let configuration = ARWorldTrackingConfiguration()
-        configuration.planeDetection = [.horizontal, .vertical]
+      //  let configuration = ARWorldTrackingConfiguration()
+     //   configuration.planeDetection = [.horizontal, .vertical]
+        let configuration = ARImageTrackingConfiguration()
+        guard let trackingImages = ARReferenceImage.referenceImages(inGroupNamed: "Markers", bundle: Bundle.main) else {
+            print("no available images")
+            return
+        }
+        configuration.trackingImages = trackingImages
+        configuration.maximumNumberOfTrackedImages = 1
         sceneView.session.run(configuration)
     }
     
-    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-        addAmbientLight(for: &sceneView)
+//    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+//        addAmbientLight(for: &sceneView)
+//
+//
+//    }
+    
+    func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
+        let node = SCNNode()
+        if let imageAnchor = anchor as? ARImageAnchor {
+            let imageSize = imageAnchor.referenceImage.physicalSize
+            let plane = SCNPlane(width: imageSize.width, height: imageSize.height)
+            plane.firstMaterial?.diffuse.contents = UIColor.white.withAlphaComponent(0.1)
+            
+            let planeNode = SCNNode(geometry: plane)
+            planeNode.eulerAngles.x = -.pi / 2
+            
+//            let crystalScene = SCNScene(named: "CrystalScene.scn")!
+//            let crystalNode = crystalScene.rootNode.childNodes.first!
+         /*
+            self.crystalNode.position = SCNVector3Zero
+            self.crystalNode.position.z = 0.1
+            self.crystalNode.isHidden = false
+            planeNode.addChildNode(self.crystalNode)
+          */
+            
+            let crystal = createCrystalNode()
+            crystal.position = SCNVector3Zero
+            crystal.position.z = 0.1
+           
+            planeNode.addChildNode(crystal)
+            node.addChildNode(planeNode)
+        }
+        return node
+    }
+
+    func createCrystalNode() -> SCNNode {
+        let node = SCNNode()
+        guard let crystalScene = SCNScene(named: "CrystalScene.scn") else {
+            fatalError("Failed to load scene")
+        }
+
+        for childNode in crystalScene.rootNode.childNodes {
+            node.addChildNode(childNode)
+        }
+        
+        return node
     }
     
     private func addAmbientLight(for scene: inout ARSCNView) {
@@ -73,6 +142,8 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         scene.scene.rootNode.light = ambientLight
         scene.scene.rootNode.categoryBitMask = 1
     }
+    
+    // MARK: - Gesture Handlers
     
     @objc func handleTap(_ gestureRecognizer: UITapGestureRecognizer) {
         // Check if there are still cubes left
@@ -148,4 +219,10 @@ extension ARViewController: ControlPanelViewDelegate {
     }
     
 }
+
+extension ARViewController: ARSessionDelegate {
+    
+    
+}
+
 
