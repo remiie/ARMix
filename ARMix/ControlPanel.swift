@@ -22,6 +22,8 @@ protocol ControlPanelViewDelegate {
 }
 
 final class ControlPanel: UIStackView, ControlPanelView {
+
+    var delegate: ControlPanelViewDelegate?
     
     var isHided: Bool {
         get { return isHidden }
@@ -31,9 +33,7 @@ final class ControlPanel: UIStackView, ControlPanelView {
         }
     }
     
-    var delegate: ControlPanelViewDelegate?
-    
-     let leftButton: UIButton = {
+    let leftButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = .white
         button.setImage(UIImage(named: "left")?.withRenderingMode(.alwaysTemplate), for: .normal)
@@ -42,7 +42,7 @@ final class ControlPanel: UIStackView, ControlPanelView {
         return button
     }()
     
-     let rightButton: UIButton = {
+    let rightButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = .white
         button.setImage(UIImage(named: "right")?.withRenderingMode(.alwaysTemplate), for: .normal)
@@ -51,7 +51,7 @@ final class ControlPanel: UIStackView, ControlPanelView {
         return button
     }()
     
-     let forwardButton: UIButton = {
+    let forwardButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = .white
         button.setImage(UIImage(named: "forward")?.withRenderingMode(.alwaysTemplate), for: .normal)
@@ -78,7 +78,7 @@ final class ControlPanel: UIStackView, ControlPanelView {
             leadingAnchor.constraint(equalTo: superview.leadingAnchor, constant: 16),
             trailingAnchor.constraint(equalTo: superview.trailingAnchor, constant: -16),
             bottomAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.bottomAnchor, constant: -16)
-
+            
         ])
     }
     
@@ -104,13 +104,13 @@ final class ControlPanel: UIStackView, ControlPanelView {
 extension ControlPanel {
     @objc func leftAction() {
         delegate?.leftButtonPressed()
-        }
-        
-        @objc func rightAction() {
-            delegate?.rightButtonPressed()
-        }
-        
-        @objc func forwardAction() {
-            delegate?.forwardButtonPressed()
-        }
+    }
+    
+    @objc func rightAction() {
+        delegate?.rightButtonPressed()
+    }
+    
+    @objc func forwardAction() {
+        delegate?.forwardButtonPressed()
+    }
 }

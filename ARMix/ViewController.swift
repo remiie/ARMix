@@ -2,39 +2,9 @@ import UIKit
 import SceneKit
 import ARKit
 
-extension SCNVector3 {
-    static func +(lhs: SCNVector3, rhs: SCNVector3) -> SCNVector3 {
-        return SCNVector3(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z)
-    }
-}
-
-extension UIColor {
-    static func randomColor() -> UIColor {
-        let red = CGFloat(arc4random_uniform(255)) / 255.0
-        let green = CGFloat(arc4random_uniform(255)) / 255.0
-        let blue = CGFloat(arc4random_uniform(255)) / 255.0
-        return UIColor(red: red, green: green, blue: blue, alpha: 1.0)
-    }
-    
-}
-
-extension UIView {
-    public func equalToSuperview() {
-        translatesAutoresizingMaskIntoConstraints = false
-        if let superview = superview {
-            leftAnchor.constraint(equalTo: superview.leftAnchor).isActive = true
-            rightAnchor.constraint(equalTo: superview.rightAnchor).isActive = true
-            topAnchor.constraint(equalTo: superview.topAnchor).isActive = true
-            bottomAnchor.constraint(equalTo: superview.bottomAnchor).isActive = true
-        }
-    }
-}
-
 enum Nodes: String {
     case cubeNode
-    var name: String {
-        return self.rawValue
-    }
+    var name: String { return self.rawValue }
 }
 
 class ViewController: UIViewController, ARSCNViewDelegate {
@@ -51,28 +21,17 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         return view
     }()
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(sceneView)
-        view.addSubview(controlPanel)
-        sceneView.equalToSuperview()
-        controlPanel.delegate = self
         
-        let configuration = ARWorldTrackingConfiguration()
-        configuration.planeDetection = [.horizontal, .vertical]
-        sceneView.session.run(configuration)
-        sceneView.delegate = self
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
-        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
-        sceneView.addGestureRecognizer(tapGesture)
-        sceneView.addGestureRecognizer(longPressGesture)
-        sceneView.scene.rootNode.addChildNode(cubesNode)
+        configureViews()
+        configureGestures()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let configuration = ARWorldTrackingConfiguration()
-        sceneView.session.run(configuration)
+        addARSCNViewConfiguration()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -80,23 +39,53 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         sceneView.session.pause()
     }
     
-    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-        // here we use the illumination estimation to adjust the virtual lighting in the scene
+    // MARK: - Configure Views
+    
+    private func configureViews() {
+        view.addSubview(sceneView)
+        view.addSubview(controlPanel)
         
-        guard let lightEstimation = sceneView.session.currentFrame?.lightEstimate else { return }
+        sceneView.equalToSuperview()
+        sceneView.delegate = self
+        controlPanel.delegate = self
+        addARSCNViewConfiguration()
+    }
+    
+    private func configureGestures() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
+        sceneView.addGestureRecognizer(tapGesture)
+        sceneView.addGestureRecognizer(longPressGesture)
+        sceneView.scene.rootNode.addChildNode(cubesNode)
+    }
+    
+    private func addARSCNViewConfiguration() {
+        let configuration = ARWorldTrackingConfiguration()
+        configuration.planeDetection = [.horizontal, .vertical]
+        sceneView.session.run(configuration)
+    }
+    
+    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+        addAmbientLight(for: &sceneView)
+    }
+    
+    private func addAmbientLight(for scene: inout ARSCNView) {
+        
+        // here we use the illumination estimation to adjust the virtual lighting in the scene
+        guard let lightEstimation = scene.session.currentFrame?.lightEstimate else { return }
         
         let ambientLight = SCNLight()
         ambientLight.type = .ambient
         ambientLight.intensity = lightEstimation.ambientIntensity
         ambientLight.temperature = lightEstimation.ambientColorTemperature
         
-        sceneView.scene.rootNode.light = ambientLight
-        sceneView.scene.rootNode.categoryBitMask = 1
+        scene.scene.rootNode.light = ambientLight
+        scene.scene.rootNode.categoryBitMask = 1
     }
     
     @objc func handleTap(_ gestureRecognizer: UITapGestureRecognizer) {
         // Check if there are still cubes left
-        defer { if hasCubes() { controlPanel.isHided = false } }  // Hiding the cube control buttons
+        defer { if cubesNode.hasChildNodes() { controlPanel.isHided = false } }  // Hiding the cube control buttons
         
         
         // Determining the touch position on the screen
@@ -110,7 +99,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Check if there is a cube among them
         for hitTestResult in hitTestResults {
             if hitTestResult.node.name == Nodes.cubeNode.name {
-                changeCubeColor(cubeNode: hitTestResult.node, color: UIColor.randomColor())
+                
+                cubesNode.changeCubeColor(cubeNode: hitTestResult.node, color: UIColor.randomColor())
                 // Changing the color of the cube
                 hitCube = true
                 break
@@ -121,7 +111,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             let results = sceneView.hitTest(location, types: [.existingPlaneUsingExtent, .estimatedHorizontalPlane])
             if let hitTestResult = results.first {
                 let position = hitTestResult.worldTransform.columns.3
-                let cubeNode = createColoredCubeNode(color: UIColor.randomColor())
+                let cubeNode = cubesNode.createColoredCubeNode(color: UIColor.randomColor())
                 cubeNode.position = SCNVector3(position.x, position.y, position.z)
                 cubesNode.addChildNode(cubeNode)
                 
@@ -131,7 +121,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
         // Check if there are still cubes left
-        defer { if !hasCubes() { controlPanel.isHided = true } } // Hiding the cube control buttons
+        defer { if !cubesNode.hasChildNodes() { controlPanel.isHided = true } } // Hiding the cube control buttons
         
         if gestureRecognizer.state == .began {
             // Determining the touch position on the screen
@@ -150,51 +140,51 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
-    func createCubeNode() -> SCNNode {
-        let cube = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.0)
-        let cubeNode = SCNNode(geometry: cube)
-        cubeNode.geometry?.firstMaterial?.diffuse.contents = UIColor.red
-        return cubeNode
-    }
-    
-    func createColoredCubeNode(color: UIColor) -> SCNNode {
-        let cubeGeometry = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0)
-        cubeGeometry.firstMaterial?.diffuse.contents = color
-        
-        let cubeNode = SCNNode(geometry: cubeGeometry)
-        cubeNode.name = Nodes.cubeNode.name
-        
-        return cubeNode
-    }
-    func changeCubeColor(cubeNode: SCNNode, color: UIColor) {
-        cubeNode.geometry?.firstMaterial?.diffuse.contents = color
-    }
-    
-    func hasCubes() -> Bool {
-        return !cubesNode.childNodes.isEmpty
-    }
-    
-    func moveCube(direction: SCNVector3) {
-        for cube in cubesNode.childNodes {
-            let currentPosition = cube.position
-            cube.position = currentPosition + direction
-        }
-    }
+//    func createCubeNode() -> SCNNode {
+//        let cube = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.003)
+//        let cubeNode = SCNNode(geometry: cube)
+//        cubeNode.geometry?.firstMaterial?.diffuse.contents = UIColor.red
+//        return cubeNode
+//    }
+//
+//    func createColoredCubeNode(color: UIColor) -> SCNNode {
+//        let cubeGeometry = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.003)
+//        cubeGeometry.firstMaterial?.diffuse.contents = color
+//
+//        let cubeNode = SCNNode(geometry: cubeGeometry)
+//        cubeNode.name = Nodes.cubeNode.name
+//
+//        return cubeNode
+//    }
+//    func changeCubeColor(cubeNode: SCNNode, color: UIColor) {
+//        cubeNode.geometry?.firstMaterial?.diffuse.contents = color
+//    }
+//
+//    func hasCubes() -> Bool {
+//        return !cubesNode.childNodes.isEmpty
+//    }
+//
+//    func moveCube(direction: SCNVector3) {
+//        for cube in cubesNode.childNodes {
+//            let currentPosition = cube.position
+//            cube.position = currentPosition + direction
+//        }
+//    }
     
 }
 
 extension ViewController: ControlPanelViewDelegate {
     
     func leftButtonPressed() {
-        moveCube(direction: SCNVector3(-0.30, 0, 0))
+        cubesNode.moveChildNodes(direction: SCNVector3(-0.30, 0, 0))
     }
     
     func rightButtonPressed() {
-        moveCube(direction: SCNVector3(0.30, 0, 0))
+        cubesNode.moveChildNodes(direction: SCNVector3(0.30, 0, 0))
     }
     
     func forwardButtonPressed() {
-        moveCube(direction: SCNVector3(0, 0, -0.30))
+        cubesNode.moveChildNodes(direction: SCNVector3(0, 0, -0.30))
     }
     
 }
