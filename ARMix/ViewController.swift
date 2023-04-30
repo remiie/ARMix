@@ -8,6 +8,23 @@ extension SCNVector3 {
     }
 }
 
+extension UIColor {
+   static func randomColor() -> UIColor {
+        let red = CGFloat(arc4random_uniform(255)) / 255.0
+        let green = CGFloat(arc4random_uniform(255)) / 255.0
+        let blue = CGFloat(arc4random_uniform(255)) / 255.0
+        return UIColor(red: red, green: green, blue: blue, alpha: 1.0)
+    }
+
+}
+
+enum Nodes: String {
+    case cubeNode
+    var name: String {
+        return self.rawValue
+    }
+}
+
 class ViewController: UIViewController, ARSCNViewDelegate {
     
     let sceneView: ARSCNView = {
@@ -128,19 +145,44 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         sceneView.scene.rootNode.categoryBitMask = 1
     }
     
-    @objc func handleTap(sender: UITapGestureRecognizer) {
-        let location = sender.location(in: sceneView)
-        let results = sceneView.hitTest(location, types: [.existingPlaneUsingExtent, .estimatedHorizontalPlane])
-        if let hitTestResult = results.first {
-            let position = hitTestResult.worldTransform.columns.3
-            let cubeNode = createCubeNode()
-            cubeNode.position = SCNVector3(position.x, position.y, position.z)
-            cubesNode.addChildNode(cubeNode)
-          //  sceneView.scene.rootNode.addChildNode(cubeNode)
-            view.subviews.forEach { $0.isHidden = false }
+//    @objc func handleTap(sender: UITapGestureRecognizer) {
+//        let location = sender.location(in: sceneView)
+//        let results = sceneView.hitTest(location, types: [.existingPlaneUsingExtent, .estimatedHorizontalPlane])
+//
+//        if let hitTestResult = results.first {
+//            let position = hitTestResult.worldTransform.columns.3
+//            let cubeNode = createCubeNode()
+//            cubeNode.position = SCNVector3(position.x, position.y, position.z)
+//            cubesNode.addChildNode(cubeNode)
+//          //  sceneView.scene.rootNode.addChildNode(cubeNode)
+//            view.subviews.forEach { $0.isHidden = false }
+//        }
+//    }
+    @objc func handleTap(_ gestureRecognizer: UITapGestureRecognizer) {
+        let location = gestureRecognizer.location(in: sceneView)
+        let hitTestResults = sceneView.hitTest(location, options: [:])
+        var hitCube = false
+        
+        for hitTestResult in hitTestResults {
+            if hitTestResult.node.name == Nodes.cubeNode.name {
+                changeCubeColor(cubeNode: hitTestResult.node, color: UIColor.randomColor())
+                hitCube = true
+                break
+            }
+        }
+        
+        if !hitCube {
+            let results = sceneView.hitTest(location, types: [.existingPlaneUsingExtent, .estimatedHorizontalPlane])
+            if let hitTestResult = results.first {
+                let position = hitTestResult.worldTransform.columns.3
+                let cubeNode = createColoredCubeNode(color: UIColor.randomColor())
+                cubeNode.position = SCNVector3(position.x, position.y, position.z)
+                cubesNode.addChildNode(cubeNode)
+                view.subviews.forEach { $0.isHidden = false }
+            }
         }
     }
-    
+
     
     func createCubeNode() -> SCNNode {
         let cube = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.0)
@@ -148,6 +190,20 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         cubeNode.geometry?.firstMaterial?.diffuse.contents = UIColor.red
         return cubeNode
     }
+    
+    func createColoredCubeNode(color: UIColor) -> SCNNode {
+        let cubeGeometry = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0)
+        cubeGeometry.firstMaterial?.diffuse.contents = color
+        
+        let cubeNode = SCNNode(geometry: cubeGeometry)
+        cubeNode.name = Nodes.cubeNode.name
+        
+        return cubeNode
+    }
+    func changeCubeColor(cubeNode: SCNNode, color: UIColor) {
+        cubeNode.geometry?.firstMaterial?.diffuse.contents = color
+    }
+
 
 }
 
