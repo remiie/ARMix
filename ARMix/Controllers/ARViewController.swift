@@ -7,20 +7,11 @@ enum Nodes: String {
     var name: String { return self.rawValue }
 }
 
-class ViewController: UIViewController, ARSCNViewDelegate {
+class ARViewController: UIViewController, ARSCNViewDelegate {
     
-     lazy var sceneView: ARSCNView = {
-        let view = ARSCNView()
-        return view
-    }()
-    
-    let cubesNode = SCNNode()
-    let controlPanel: ControlPanelView = {
-        let view = ControlPanel()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
+    private var sceneView = ARSCNView()
+    private var cubesNode = SCNNode()
+    private let controlPanel: ControlPanelView = ControlPanel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -139,41 +130,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             }
         }
     }
-    
-//    func createCubeNode() -> SCNNode {
-//        let cube = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.003)
-//        let cubeNode = SCNNode(geometry: cube)
-//        cubeNode.geometry?.firstMaterial?.diffuse.contents = UIColor.red
-//        return cubeNode
-//    }
-//
-//    func createColoredCubeNode(color: UIColor) -> SCNNode {
-//        let cubeGeometry = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.003)
-//        cubeGeometry.firstMaterial?.diffuse.contents = color
-//
-//        let cubeNode = SCNNode(geometry: cubeGeometry)
-//        cubeNode.name = Nodes.cubeNode.name
-//
-//        return cubeNode
-//    }
-//    func changeCubeColor(cubeNode: SCNNode, color: UIColor) {
-//        cubeNode.geometry?.firstMaterial?.diffuse.contents = color
-//    }
-//
-//    func hasCubes() -> Bool {
-//        return !cubesNode.childNodes.isEmpty
-//    }
-//
-//    func moveCube(direction: SCNVector3) {
-//        for cube in cubesNode.childNodes {
-//            let currentPosition = cube.position
-//            cube.position = currentPosition + direction
-//        }
-//    }
-    
 }
 
-extension ViewController: ControlPanelViewDelegate {
+// MARK: - Delegate
+extension ARViewController: ControlPanelViewDelegate {
     
     func leftButtonPressed() {
         cubesNode.moveChildNodes(direction: SCNVector3(-0.30, 0, 0))

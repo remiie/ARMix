@@ -9,18 +9,26 @@
 /* Begin PBXBuildFile section */
 		B601901029FE9BA70097332B /* ControlPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B601900F29FE9BA70097332B /* ControlPanel.swift */; };
 		B66D492D29FD7720008EDA20 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66D492C29FD7720008EDA20 /* AppDelegate.swift */; };
-		B66D493129FD7720008EDA20 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66D493029FD7720008EDA20 /* ViewController.swift */; };
+		B66D493129FD7720008EDA20 /* ARViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66D493029FD7720008EDA20 /* ARViewController.swift */; };
 		B66D493629FD7721008EDA20 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B66D493529FD7721008EDA20 /* Assets.xcassets */; };
-		B6E73EA229FEC0F3009399D5 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E73EA129FEC0F3009399D5 /* Extensions.swift */; };
+		B6E73EA529FEC898009399D5 /* SCNVector.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E73EA429FEC898009399D5 /* SCNVector.swift */; };
+		B6E73EA729FEC8B3009399D5 /* SCNNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E73EA629FEC8B3009399D5 /* SCNNode.swift */; };
+		B6E73EA929FEC8F6009399D5 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E73EA829FEC8F6009399D5 /* UIColor.swift */; };
+		B6E73EAB29FEC90D009399D5 /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E73EAA29FEC90D009399D5 /* UIView.swift */; };
+		B6E73EAE29FEC9C7009399D5 /* ControlPanelProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E73EAD29FEC9C7009399D5 /* ControlPanelProtocols.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		B601900F29FE9BA70097332B /* ControlPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlPanel.swift; sourceTree = "<group>"; };
 		B66D492929FD7720008EDA20 /* ARMix.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARMix.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B66D492C29FD7720008EDA20 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		B66D493029FD7720008EDA20 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		B66D493029FD7720008EDA20 /* ARViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewController.swift; sourceTree = "<group>"; };
 		B66D493529FD7721008EDA20 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		B6E73EA129FEC0F3009399D5 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		B6E73EA429FEC898009399D5 /* SCNVector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SCNVector.swift; sourceTree = "<group>"; };
+		B6E73EA629FEC8B3009399D5 /* SCNNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SCNNode.swift; sourceTree = "<group>"; };
+		B6E73EA829FEC8F6009399D5 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
+		B6E73EAA29FEC90D009399D5 /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
+		B6E73EAD29FEC9C7009399D5 /* ControlPanelProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlPanelProtocols.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,12 +62,48 @@
 			isa = PBXGroup;
 			children = (
 				B66D492C29FD7720008EDA20 /* AppDelegate.swift */,
-				B6E73EA129FEC0F3009399D5 /* Extensions.swift */,
-				B66D493029FD7720008EDA20 /* ViewController.swift */,
-				B601900F29FE9BA70097332B /* ControlPanel.swift */,
+				B6E73EAF29FEC9E9009399D5 /* Protocols */,
+				B6E73EA329FEC880009399D5 /* Extensions */,
+				B6E73EB029FECA0D009399D5 /* Controllers */,
+				B6E73EAC29FEC9A7009399D5 /* Views */,
 				B66D493529FD7721008EDA20 /* Assets.xcassets */,
 			);
 			path = ARMix;
+			sourceTree = "<group>";
+		};
+		B6E73EA329FEC880009399D5 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				B6E73EA429FEC898009399D5 /* SCNVector.swift */,
+				B6E73EA629FEC8B3009399D5 /* SCNNode.swift */,
+				B6E73EA829FEC8F6009399D5 /* UIColor.swift */,
+				B6E73EAA29FEC90D009399D5 /* UIView.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		B6E73EAC29FEC9A7009399D5 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B601900F29FE9BA70097332B /* ControlPanel.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		B6E73EAF29FEC9E9009399D5 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				B6E73EAD29FEC9C7009399D5 /* ControlPanelProtocols.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		B6E73EB029FECA0D009399D5 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				B66D493029FD7720008EDA20 /* ARViewController.swift */,
+			);
+			path = Controllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -131,10 +175,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B66D493129FD7720008EDA20 /* ViewController.swift in Sources */,
+				B6E73EAB29FEC90D009399D5 /* UIView.swift in Sources */,
+				B6E73EA529FEC898009399D5 /* SCNVector.swift in Sources */,
+				B6E73EA929FEC8F6009399D5 /* UIColor.swift in Sources */,
+				B66D493129FD7720008EDA20 /* ARViewController.swift in Sources */,
+				B6E73EAE29FEC9C7009399D5 /* ControlPanelProtocols.swift in Sources */,
 				B601901029FE9BA70097332B /* ControlPanel.swift in Sources */,
 				B66D492D29FD7720008EDA20 /* AppDelegate.swift in Sources */,
-				B6E73EA229FEC0F3009399D5 /* Extensions.swift in Sources */,
+				B6E73EA729FEC8B3009399D5 /* SCNNode.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

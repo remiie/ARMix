@@ -1,18 +1,12 @@
 //
-//  Extensions.swift
+//  SCNNode.swift
 //  ARMix
 //
 //  Created by Роман Васильев on 30.04.2023.
 //
 
-import UIKit
 import SceneKit
-
-extension SCNVector3 {
-    static func +(lhs: SCNVector3, rhs: SCNVector3) -> SCNVector3 {
-        return SCNVector3(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z)
-    }
-}
+import Foundation
 
 extension SCNNode {
      func createCubeNode() -> SCNNode {
@@ -46,26 +40,4 @@ extension SCNNode {
         }
     }
 
-}
-
-extension UIColor {
-    static func randomColor() -> UIColor {
-        let red = CGFloat(arc4random_uniform(255)) / 255.0
-        let green = CGFloat(arc4random_uniform(255)) / 255.0
-        let blue = CGFloat(arc4random_uniform(255)) / 255.0
-        return UIColor(red: red, green: green, blue: blue, alpha: 1.0)
-    }
-    
-}
-
-extension UIView {
-    public func equalToSuperview() {
-        translatesAutoresizingMaskIntoConstraints = false
-        if let superview = superview {
-            leftAnchor.constraint(equalTo: superview.leftAnchor).isActive = true
-            rightAnchor.constraint(equalTo: superview.rightAnchor).isActive = true
-            topAnchor.constraint(equalTo: superview.topAnchor).isActive = true
-            bottomAnchor.constraint(equalTo: superview.bottomAnchor).isActive = true
-        }
-    }
 }

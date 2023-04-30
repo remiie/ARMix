@@ -7,20 +7,6 @@
 
 import UIKit
 
-protocol ControlPanelView: UIStackView {
-    var leftButton: UIButton { get }
-    var rightButton: UIButton { get }
-    var forwardButton: UIButton { get }
-    var delegate: ControlPanelViewDelegate? { get set }
-    var isHided: Bool { get set }
-}
-
-protocol ControlPanelViewDelegate {
-    func leftButtonPressed()
-    func rightButtonPressed()
-    func forwardButtonPressed()
-}
-
 final class ControlPanel: UIStackView, ControlPanelView {
 
     var delegate: ControlPanelViewDelegate?
