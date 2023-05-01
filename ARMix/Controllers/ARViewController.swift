@@ -39,7 +39,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         controlPanel.delegate = self
         addARSCNViewConfiguration()
     }
-
+    
     private func configureGestures() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
@@ -69,7 +69,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
             let crystal = createCrystalNode()
             crystal.position = SCNVector3Zero
             crystal.position.z = 0.1
-           
+            
             planeNode.addChildNode(crystal)
             node.addChildNode(planeNode)
             cubeSpeed = .fast
@@ -83,15 +83,15 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
             guard let image = image,
                   let cgImage = image.cgImage else { return }
             let referenceImage = ARReferenceImage(cgImage, orientation: .up, physicalWidth: 0.2)
-        
+            
             DispatchQueue.main.async { [self] in
                 configuration.detectionImages = [referenceImage]
                 sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
             }
         }
     }
-
-   private func createCrystalNode() -> SCNNode {
+    
+    private func createCrystalNode() -> SCNNode {
         let node = SCNNode()
         guard let crystalScene = SCNScene(named: "CrystalScene.scn") else { fatalError("Failed to load scene") }
         
@@ -126,15 +126,12 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         }
         // If the user did not hit the cube, then create a new cube
         if !hitCube {
-            
             let results = sceneView.hitTest(location, types: [.existingPlaneUsingExtent, .estimatedHorizontalPlane])
             if let hitTestResult = results.first {
-                print("hit")
                 let position = hitTestResult.worldTransform.columns.3
                 let cubeNode = cubesNode.createColoredCubeNode(color: UIColor.randomColor())
                 cubeNode.position = SCNVector3(position.x, position.y, position.z)
                 cubesNode.addChildNode(cubeNode)
-                
             }
         }
     }

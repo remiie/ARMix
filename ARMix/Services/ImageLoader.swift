@@ -27,8 +27,3 @@ final class ImageLoader {
         }.resume()
     }
 }
-
-extension ImageLoader {
-
-}
-
