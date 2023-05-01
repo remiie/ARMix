@@ -2,20 +2,15 @@ import UIKit
 import SceneKit
 import ARKit
 
-enum Nodes: String {
-    case cubeNode
-    var name: String { return self.rawValue }
-}
-
 class ARViewController: UIViewController, ARSCNViewDelegate {
     
     private var sceneView = ARSCNView()
     private var cubesNode = SCNNode()
+    private let configuration = ARWorldTrackingConfiguration()
+    private var cubeSpeed = CubeSpeed.normal
     private let controlPanel: ControlPanelView = ControlPanel()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         configureViews()
         configureGestures()
     }
@@ -44,7 +39,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         controlPanel.delegate = self
         addARSCNViewConfiguration()
     }
-    
+
     private func configureGestures() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
@@ -54,13 +49,12 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     }
     
     private func addARSCNViewConfiguration() {
-        let configuration = ARWorldTrackingConfiguration()
-        configuration.planeDetection = [.horizontal, .vertical]
-        guard let trackingImages = ARReferenceImage.referenceImages(inGroupNamed: "Markers", bundle: Bundle.main) else { print("No available images"); return }
-        configuration.detectionImages = trackingImages
+        getTrackingImage()
         configuration.maximumNumberOfTrackedImages = 1
-        sceneView.session.run(configuration)
+        configuration.planeDetection = [.horizontal, .vertical]
     }
+    
+    //MARK: - Imange Anhor
     
     func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
         let node = SCNNode()
@@ -78,30 +72,31 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
            
             planeNode.addChildNode(crystal)
             node.addChildNode(planeNode)
+            cubeSpeed = .fast
         }
         return node
     }
+    
+    private func getTrackingImage() {
+        guard let url = URL(string: URLs.marker.urlString) else { return }
+        ImageLoader.shared.downloadImage(url: url) { [self] image in
+            guard let image = image,
+                  let cgImage = image.cgImage else { return }
+            let referenceImage = ARReferenceImage(cgImage, orientation: .up, physicalWidth: 0.2)
+        
+            DispatchQueue.main.async { [self] in
+                configuration.detectionImages = [referenceImage]
+                sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
+            }
+        }
+    }
 
-    func createCrystalNode() -> SCNNode {
+   private func createCrystalNode() -> SCNNode {
         let node = SCNNode()
         guard let crystalScene = SCNScene(named: "CrystalScene.scn") else { fatalError("Failed to load scene") }
         
         for childNode in crystalScene.rootNode.childNodes { node.addChildNode(childNode) }
         return node
-    }
-    
-    private func addAmbientLight(for scene: inout ARSCNView) {
-        
-        // here we use the illumination estimation to adjust the virtual lighting in the scene
-        guard let lightEstimation = scene.session.currentFrame?.lightEstimate else { return }
-        
-        let ambientLight = SCNLight()
-        ambientLight.type = .ambient
-        ambientLight.intensity = lightEstimation.ambientIntensity
-        ambientLight.temperature = lightEstimation.ambientColorTemperature
-        
-        scene.scene.rootNode.light = ambientLight
-        scene.scene.rootNode.categoryBitMask = 1
     }
     
     // MARK: - Gesture Handlers
@@ -170,15 +165,15 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
 extension ARViewController: ControlPanelViewDelegate {
     
     func leftButtonPressed() {
-        cubesNode.moveChildNodes(direction: SCNVector3(-0.30, 0, 0))
+        cubesNode.moveChildNodes(direction: SCNVector3(-cubeSpeed.value, 0, 0))
     }
     
     func rightButtonPressed() {
-        cubesNode.moveChildNodes(direction: SCNVector3(0.30, 0, 0))
+        cubesNode.moveChildNodes(direction: SCNVector3(cubeSpeed.value, 0, 0))
     }
     
     func forwardButtonPressed() {
-        cubesNode.moveChildNodes(direction: SCNVector3(0, 0, -0.30))
+        cubesNode.moveChildNodes(direction: SCNVector3(0, 0, -cubeSpeed.value))
     }
     
 }
